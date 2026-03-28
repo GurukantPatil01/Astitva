@@ -40,9 +40,19 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// ── 404 Handler ────────────────────────────────────────
-app.use((req, res) => {
-    res.status(404).json({ error: 'Route not found' });
+// ── Serve React Frontend (production) ──────────────────
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'client', 'dist')));
+
+// SPA fallback — serve index.html for non-API routes
+app.get(/^(?!\/api).*$/, (req, res) => {
+    const indexPath = path.join(__dirname, 'client', 'dist', 'index.html');
+    const fs = require('fs');
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+    } else {
+        res.status(404).json({ error: 'Frontend not built. Run: cd client && npm run build' });
+    }
 });
 
 // ── Error Handler ──────────────────────────────────────

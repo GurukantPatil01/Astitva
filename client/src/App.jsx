@@ -1,38 +1,72 @@
-import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { useState, useEffect } from 'react';
+import Landing from './pages/Landing';
 import Home from './pages/Home';
 import GroupDetail from './pages/GroupDetail';
 import './App.css';
 
+function AppNavbar({ darkMode, toggleDark }) {
+  const location = useLocation();
+  const isLanding = location.pathname === '/';
+
+  if (isLanding) return null;
+
+  return (
+    <nav className="navbar">
+      <NavLink to="/" className="navbar-brand">
+        <span className="logo">₹</span>
+        Split It Fair
+      </NavLink>
+      <div className="navbar-links">
+        <NavLink to="/app" className={({ isActive }) => isActive ? 'active' : ''}>
+          Groups
+        </NavLink>
+        <button
+          className="btn-icon"
+          onClick={toggleDark}
+          title="Toggle dark mode"
+          style={{ marginLeft: 4 }}
+        >
+          {darkMode ? '☀️' : '🌙'}
+        </button>
+      </div>
+    </nav>
+  );
+}
+
 function App() {
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
+
   return (
     <Router>
       <Toaster
-        position="top-right"
+        position="top-center"
         toastOptions={{
           style: {
-            background: '#1a1a2e',
-            color: '#f0f0f5',
-            border: '1px solid #2a2a40',
-            borderRadius: '12px',
+            background: darkMode ? '#1a1a2e' : '#0a0a0a',
+            color: '#fafafa',
+            borderRadius: '10px',
+            fontSize: '0.85rem',
+            fontWeight: 500,
+            padding: '10px 16px',
           },
+          duration: 2500,
         }}
       />
       <div className="app-container">
-        <nav className="navbar">
-          <NavLink to="/" className="navbar-brand">
-            <span className="logo">💰</span>
-            Split It Fair
-          </NavLink>
-          <div className="navbar-links">
-            <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}>
-              Groups
-            </NavLink>
-          </div>
-        </nav>
+        <AppNavbar darkMode={darkMode} toggleDark={() => setDarkMode(!darkMode)} />
         <main className="page-container">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Landing />} />
+            <Route path="/app" element={<Home />} />
             <Route path="/groups/:groupId" element={<GroupDetail />} />
           </Routes>
         </main>

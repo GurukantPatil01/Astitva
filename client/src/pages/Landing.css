@@ -1,0 +1,310 @@
+.landing {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* ── Landing Nav ─────────────────────────────────── */
+.landing-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.landing-nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-0);
+}
+
+.landing-logo {
+    width: 34px;
+    height: 34px;
+    background: var(--primary);
+    color: white;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+/* ── Hero ────────────────────────────────────────── */
+.hero {
+    text-align: center;
+    padding: 60px 24px 48px;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.hero-badge {
+    display: inline-flex;
+    padding: 6px 16px;
+    background: var(--primary-soft);
+    border: 1px solid rgba(79, 70, 229, 0.15);
+    border-radius: var(--radius-full);
+    font-size: 0.73rem;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: 0.02em;
+    margin-bottom: 24px;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    color: var(--text-0);
+    margin-bottom: 18px;
+}
+
+.hero-highlight {
+    background: linear-gradient(135deg, var(--primary), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: 1.05rem;
+    color: var(--text-2);
+    line-height: 1.7;
+    max-width: 480px;
+    margin: 0 auto 28px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 44px;
+}
+
+.hero-stats {
+    display: inline-flex;
+    align-items: center;
+    gap: 24px;
+    padding: 18px 30px;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.hero-stat {
+    text-align: center;
+}
+
+.hero-stat-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--primary);
+}
+
+.hero-stat-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+}
+
+.hero-stat-divider {
+    width: 1px;
+    height: 30px;
+    background: var(--border);
+}
+
+/* ── Sections ────────────────────────────────────── */
+.landing-section {
+    padding: 48px 24px;
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.landing-section-header {
+    text-align: center;
+    margin-bottom: 36px;
+}
+
+.section-badge {
+    display: inline-flex;
+    padding: 4px 14px;
+    background: var(--primary-soft);
+    border-radius: var(--radius-full);
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+}
+
+.landing-section-title {
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    color: var(--text-0);
+    line-height: 1.2;
+}
+
+/* ── Features ────────────────────────────────────── */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+.feature-card {
+    padding: 24px;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    transition: var(--transition);
+}
+
+.feature-card:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.feature-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-soft);
+    border-radius: var(--radius-md);
+    font-size: 1.1rem;
+    margin-bottom: 14px;
+}
+
+.feature-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.2px;
+}
+
+.feature-desc {
+    font-size: 0.82rem;
+    color: var(--text-2);
+    line-height: 1.55;
+}
+
+/* ── Steps ───────────────────────────────────────── */
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+
+.step-card {
+    padding: 24px;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+}
+
+.step-num {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--primary-soft);
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+    -webkit-text-stroke: 1px var(--primary);
+}
+
+.step-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.step-desc {
+    font-size: 0.8rem;
+    color: var(--text-2);
+    line-height: 1.5;
+}
+
+/* ── CTA ─────────────────────────────────────────── */
+.landing-cta {
+    text-align: center;
+    padding: 48px 24px;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.landing-cta-title {
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+}
+
+.landing-cta-desc {
+    color: var(--text-2);
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+/* ── Footer ──────────────────────────────────────── */
+.landing-footer {
+    padding: 22px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.88rem;
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.2rem;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-stats {
+        flex-direction: column;
+        gap: 12px;
+        padding: 20px;
+    }
+
+    .hero-stat-divider {
+        width: 40px;
+        height: 1px;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .steps-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .landing-section-title {
+        font-size: 1.5rem;
+    }
+
+    .landing-nav {
+        padding: 12px 16px;
+    }
+}

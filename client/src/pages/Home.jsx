@@ -10,19 +10,14 @@ export default function Home() {
     const [newGroup, setNewGroup] = useState({ name: '', base_currency: 'INR' });
     const navigate = useNavigate();
 
-    useEffect(() => {
-        loadGroups();
-    }, []);
+    useEffect(() => { loadGroups(); }, []);
 
     async function loadGroups() {
         try {
             const data = await groupsAPI.list();
             setGroups(data.groups || []);
-        } catch (err) {
-            toast.error(err.message);
-        } finally {
-            setLoading(false);
-        }
+        } catch (err) { toast.error(err.message); }
+        finally { setLoading(false); }
     }
 
     async function createGroup(e) {
@@ -30,13 +25,11 @@ export default function Home() {
         if (!newGroup.name.trim()) return toast.error('Group name is required');
         try {
             await groupsAPI.create(newGroup);
-            toast.success('Group created!');
+            toast.success('Group created');
             setShowModal(false);
             setNewGroup({ name: '', base_currency: 'INR' });
             loadGroups();
-        } catch (err) {
-            toast.error(err.message);
-        }
+        } catch (err) { toast.error(err.message); }
     }
 
     async function deleteGroup(id, e) {
@@ -46,21 +39,17 @@ export default function Home() {
             await groupsAPI.delete(id);
             toast.success('Group deleted');
             loadGroups();
-        } catch (err) {
-            toast.error(err.message);
-        }
+        } catch (err) { toast.error(err.message); }
     }
 
-    if (loading) {
-        return <div className="loading-center"><div className="spinner" /></div>;
-    }
+    if (loading) return <div className="loading-center"><div className="spinner" /></div>;
 
     return (
         <div>
             <div className="section-header">
                 <div>
-                    <h1 className="section-title">Your Groups</h1>
-                    <p className="section-subtitle">Manage shared expenses with friends & roommates</p>
+                    <h1 className="section-title">Groups</h1>
+                    <p className="section-subtitle">Manage shared expenses with your people</p>
                 </div>
                 <button className="btn btn-primary" onClick={() => setShowModal(true)}>
                     + New Group
@@ -69,10 +58,10 @@ export default function Home() {
 
             {groups.length === 0 ? (
                 <div className="empty-state">
-                    <div className="icon">👥</div>
-                    <p>No groups yet. Create one to start splitting expenses!</p>
+                    <div className="icon">💳</div>
+                    <p>Create your first group to start tracking shared expenses — trips, flatmates, lunches.</p>
                     <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-                        + Create Your First Group
+                        Create Group
                     </button>
                 </div>
             ) : (
@@ -81,20 +70,17 @@ export default function Home() {
                         <div
                             key={group.id}
                             className="card animate-in"
-                            style={{ animationDelay: `${i * 0.05}s`, cursor: 'pointer' }}
+                            style={{ animationDelay: `${i * 0.04}s`, cursor: 'pointer' }}
                             onClick={() => navigate(`/groups/${group.id}`)}
                         >
                             <div className="card-header">
                                 <h3 className="card-title">{group.name}</h3>
-                                <button
-                                    className="btn btn-sm btn-danger"
-                                    onClick={(e) => deleteGroup(group.id, e)}
-                                >
-                                    🗑
+                                <button className="btn-icon" onClick={(e) => deleteGroup(group.id, e)} title="Delete group">
+                                    ✕
                                 </button>
                             </div>
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                                <span className="badge badge-purple">{group.base_currency}</span>
+                            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                <span className="badge badge-neutral">{group.base_currency}</span>
                                 <span className="badge badge-blue">
                                     {group.member_count} member{group.member_count !== 1 ? 's' : ''}
                                 </span>
@@ -107,13 +93,13 @@ export default function Home() {
             {showModal && (
                 <div className="modal-overlay" onClick={() => setShowModal(false)}>
                     <div className="modal" onClick={(e) => e.stopPropagation()}>
-                        <h2 className="modal-title">Create New Group</h2>
+                        <h2 className="modal-title">New Group</h2>
                         <form onSubmit={createGroup}>
                             <div className="form-group">
-                                <label>Group Name</label>
+                                <label>Name</label>
                                 <input
                                     className="form-input"
-                                    placeholder="e.g. Goa Trip, Flat 4B, Office Lunch"
+                                    placeholder="e.g. Goa Trip, Flat 4B"
                                     value={newGroup.name}
                                     onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })}
                                     autoFocus
@@ -126,22 +112,18 @@ export default function Home() {
                                     value={newGroup.base_currency}
                                     onChange={(e) => setNewGroup({ ...newGroup, base_currency: e.target.value })}
                                 >
-                                    <option value="INR">🇮🇳 INR — Indian Rupee</option>
-                                    <option value="USD">🇺🇸 USD — US Dollar</option>
-                                    <option value="EUR">🇪🇺 EUR — Euro</option>
-                                    <option value="GBP">🇬🇧 GBP — British Pound</option>
-                                    <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
-                                    <option value="AUD">🇦🇺 AUD — Australian Dollar</option>
-                                    <option value="THB">🇹🇭 THB — Thai Baht</option>
+                                    <option value="INR">INR — Indian Rupee</option>
+                                    <option value="USD">USD — US Dollar</option>
+                                    <option value="EUR">EUR — Euro</option>
+                                    <option value="GBP">GBP — British Pound</option>
+                                    <option value="JPY">JPY — Japanese Yen</option>
+                                    <option value="AUD">AUD — Australian Dollar</option>
+                                    <option value="THB">THB — Thai Baht</option>
                                 </select>
                             </div>
                             <div className="modal-actions">
-                                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
-                                    Cancel
-                                </button>
-                                <button type="submit" className="btn btn-primary">
-                                    Create Group
-                                </button>
+                                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
+                                <button type="submit" className="btn btn-primary">Create</button>
                             </div>
                         </form>
                     </div>
