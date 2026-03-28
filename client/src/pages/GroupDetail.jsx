@@ -58,7 +58,7 @@ export default function GroupDetail() {
         title: '', amount: '', currency: 'INR', paid_by: '',
         date: new Date().toISOString().split('T')[0],
         split_method: 'equal', is_recurring: false, category: 'Others',
-        recurrence_interval: 'monthly', split_details: {}, members: [],
+        recurrence_interval: 'monthly', split_details: { percentages: {}, shares: {}, items: [] }, members: [],
     });
 
     useEffect(() => { loadAll(); }, [groupId]);
