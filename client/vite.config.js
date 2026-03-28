@@ -5,9 +5,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+    host: true, // Listen on all local IPs (IPv4 and IPv6)
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'http://127.0.0.1:3000', // Use IPv4 loopback to avoid host resolution issues
         changeOrigin: true,
       },
     },

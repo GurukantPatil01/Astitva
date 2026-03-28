@@ -23,6 +23,7 @@ const expenseRoutes = require('./routes/expenses');
 const balanceRoutes = require('./routes/balances');
 const recurringRoutes = require('./routes/recurring');
 const currencyRoutes = require('./routes/currency');
+const meRoutes = require('./routes/me');
 
 app.use('/api/groups', groupRoutes);
 app.use('/api', memberRoutes);
@@ -30,6 +31,7 @@ app.use('/api', expenseRoutes);
 app.use('/api', balanceRoutes);
 app.use('/api', recurringRoutes);
 app.use('/api/currency', currencyRoutes);
+app.use('/api/me', meRoutes);
 
 // ── Health Check ───────────────────────────────────────
 app.get('/api/health', (req, res) => {

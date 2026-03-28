@@ -4,13 +4,16 @@ import { useState, useEffect } from 'react';
 import Landing from './pages/Landing';
 import Home from './pages/Home';
 import GroupDetail from './pages/GroupDetail';
+import CreateGroup from './pages/CreateGroup';
 import './App.css';
 
 function AppNavbar({ darkMode, toggleDark }) {
   const location = useLocation();
   const isLanding = location.pathname === '/';
+  const isGroupDetail = location.pathname.startsWith('/groups/');
+  const isCreateGroup = location.pathname === '/create-group';
 
-  if (isLanding) return null;
+  if (isLanding || isGroupDetail || isCreateGroup) return null;
 
   return (
     <nav className="navbar">
@@ -67,6 +70,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/app" element={<Home />} />
+            <Route path="/create-group" element={<CreateGroup />} />
             <Route path="/groups/:groupId" element={<GroupDetail />} />
           </Routes>
         </main>

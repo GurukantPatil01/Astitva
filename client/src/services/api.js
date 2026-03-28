@@ -53,3 +53,8 @@ export const currencyAPI = {
     convert: (from, to, amount) => request(`/currency/convert?from=${from}&to=${to}&amount=${amount}`),
     supported: () => request('/currency/supported'),
 };
+
+// ── Global Context (Me) ────────────────────────────────
+export const meAPI = {
+    getDashboard: () => request('/me/dashboard'),
+};

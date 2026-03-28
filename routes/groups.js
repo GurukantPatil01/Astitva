@@ -5,21 +5,36 @@ const supabase = require('../db/supabase');
 // ── POST / — Create a new group ────────────────────────
 router.post('/', async (req, res) => {
     try {
-        const { name, base_currency = 'INR' } = req.body;
+        const { name, base_currency = 'INR', members = ['Me'] } = req.body;
 
         if (!name || !name.trim()) {
             return res.status(400).json({ error: 'Group name is required' });
         }
 
-        const { data, error } = await supabase
+        // 1. Insert Group
+        const { data: group, error: groupError } = await supabase
             .from('groups')
             .insert({ name: name.trim(), base_currency: base_currency.toUpperCase() })
             .select()
             .single();
 
-        if (error) throw error;
+        if (groupError) throw groupError;
 
-        res.status(201).json({ message: 'Group created', group: data });
+        // 2. Insert Members
+        if (members && Array.isArray(members) && members.length > 0) {
+            const memberInserts = members.map(mName => ({
+                name: mName.trim(),
+                group_id: group.id
+            }));
+
+            const { error: memError } = await supabase
+                .from('members')
+                .insert(memberInserts);
+
+            if (memError) throw memError;
+        }
+
+        res.status(201).json({ message: 'Group created', group });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
