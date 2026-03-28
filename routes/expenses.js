@@ -19,6 +19,7 @@ router.post('/groups/:groupId/expenses', async (req, res) => {
             members: splitMembers,
             is_recurring = false,
             recurrence_interval = null,
+            category = 'Others',
         } = req.body;
 
         // ── Validation ─────────────────────────────────────
@@ -85,6 +86,7 @@ router.post('/groups/:groupId/expenses', async (req, res) => {
                 is_recurring,
                 recurrence_interval: is_recurring ? recurrence_interval : null,
                 last_recurrence_date: is_recurring ? (date || new Date().toISOString().split('T')[0]) : null,
+                category: category || 'Others',
                 exchange_rate: exchangeRate,
                 converted_amount: convertedAmount,
             })

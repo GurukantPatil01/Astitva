@@ -6,7 +6,6 @@ const FEATURES = [
     { icon: '🌍', title: 'Multi-Currency', desc: 'Add expenses in any currency. Auto-converted with live forex rates.' },
     { icon: '⚡', title: 'Smart Settlements', desc: 'Minimizes transactions. No more chains of "A pays B pays C".' },
     { icon: '📊', title: 'Visual Analytics', desc: 'Charts showing spending patterns, category breakdowns, and contributions.' },
-    { icon: '🔄', title: 'Recurring Expenses', desc: 'Rent, utilities, subscriptions — set once, auto-generated every cycle.' },
     { icon: '📋', title: 'Export & Share', desc: 'Download CSV reports or share settlements via WhatsApp.' },
 ];
 

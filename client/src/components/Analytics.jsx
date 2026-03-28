@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import { aiService } from '../services/aiService';
 import {
     PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
@@ -6,6 +7,23 @@ import {
 const COLORS = ['#2563eb', '#7c3aed', '#16a34a', '#ea580c', '#dc2626', '#0891b2', '#d946ef', '#65a30d'];
 
 export default function Analytics({ expenses, members, group }) {
+    const [aiInsights, setAiInsights] = useState([]);
+    const [aiLoading, setAiLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchInsights = async () => {
+            if (expenses.length > 0) {
+                setAiLoading(true);
+                try {
+                    const insights = await aiService.getInsights(expenses, members, group);
+                    if (insights) setAiInsights(insights);
+                } catch (e) { console.error(e); }
+                finally { setAiLoading(false); }
+            }
+        };
+        fetchInsights();
+    }, [expenses, members, group]);
+
     const currencySymbol = group?.base_currency === 'INR' ? '₹' : (group?.base_currency + ' ');
 
     // Who paid the most
@@ -18,14 +36,19 @@ export default function Analytics({ expenses, members, group }) {
         return Object.values(map).filter((d) => d.value > 0).sort((a, b) => b.value - a.value);
     }, [expenses, members]);
 
-    // Split method distribution
-    const splitMethodData = useMemo(() => {
+    // Category breakdown
+    const categoryData = useMemo(() => {
         const map = {};
         expenses.forEach((e) => {
-            map[e.split_method] = (map[e.split_method] || 0) + 1;
+            const cat = e.category || 'Others';
+            map[cat] = (map[cat] || 0) + parseFloat(e.converted_amount || e.amount);
         });
-        return Object.entries(map).map(([name, value]) => ({ name, value }));
+        return Object.entries(map)
+            .map(([name, value]) => ({ name, value }))
+            .sort((a, b) => b.value - a.value);
     }, [expenses]);
+
+    // Split method distribution
 
     // Monthly spending trend
     const monthlyData = useMemo(() => {
@@ -133,6 +156,32 @@ export default function Analytics({ expenses, members, group }) {
                     </div>
                 </div>
 
+                {/* Category Breakdown */}
+                <div className="card" style={{ padding: 20 }}>
+                    <h3 style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-2)', marginBottom: 16, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                        By Category
+                    </h3>
+                    <ResponsiveContainer width="100%" height={200}>
+                        <PieChart>
+                            <Pie data={categoryData} cx="50%" cy="50%" innerRadius={50} outerRadius={80}
+                                paddingAngle={3} dataKey="value" stroke="none">
+                                {categoryData.map((_, i) => (
+                                    <Cell key={i} fill={COLORS[(i + 2) % COLORS.length]} />
+                                ))}
+                            </Pie>
+                            <Tooltip content={<CustomTooltip />} />
+                        </PieChart>
+                    </ResponsiveContainer>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginTop: 8 }}>
+                        {categoryData.slice(0, 4).map((d, i) => (
+                            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.72rem' }}>
+                                <span style={{ width: 8, height: 8, borderRadius: '50%', background: COLORS[(i + 2) % COLORS.length] }} />
+                                <span style={{ color: 'var(--text-2)' }}>{d.name}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
                 {/* Monthly Trend */}
                 <div className="card" style={{ padding: 20 }}>
                     <h3 style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-2)', marginBottom: 16, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
@@ -172,6 +221,47 @@ export default function Analytics({ expenses, members, group }) {
                     </div>
                 </div>
             )}
+
+            {/* AI Insights Panel */}
+            <div className="card" style={{ padding: 24, background: 'linear-gradient(135deg, white 0%, var(--bg-0) 100%)', border: '1px dashed var(--primary-soft)', marginTop: 24 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                    <div style={{ fontSize: '1.5rem' }}>✨</div>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 800 }}>Smart Insights (Powered by Gemini)</h3>
+                </div>
+                <div style={{ color: 'var(--text-1)', lineHeight: 1.6, fontSize: '0.95rem' }}>
+                    {aiLoading ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-3)' }}>
+                            <div className="spinner-small" /> Analyzing your spending patterns...
+                        </div>
+                    ) : aiInsights.length > 0 ? (
+                        <ul style={{ paddingLeft: 20, color: 'var(--text-2)' }}>
+                            {aiInsights.map((insight, i) => (
+                                <li key={i} style={{ marginBottom: 8 }}>{insight}</li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <div>
+                            <p style={{ marginBottom: 12 }}>
+                                Based on your group's activity, here's what basic analysis says:
+                            </p>
+                            <ul style={{ paddingLeft: 20, color: 'var(--text-2)' }}>
+                                <li style={{ marginBottom: 8 }}>
+                                    You spend <strong>{(categoryData[0]?.value / totalSpent * 100).toPrecision(2)}%</strong> of your budget on <strong>{categoryData[0]?.name}</strong>.
+                                </li>
+                                <li style={{ marginBottom: 8 }}>
+                                    Overall participation is <strong>{(members.filter(m => paidByData.some(p => p.name === m.name)).length / members.length * 100).toPrecision(2)}%</strong>.
+                                </li>
+                                <li>
+                                    Trends show your spending is <strong>{monthlyData.length > 1 && monthlyData[monthlyData.length - 1].total > monthlyData[monthlyData.length - 2].total ? 'increasing' : 'stabilizing'}</strong>.
+                                </li>
+                            </ul>
+                            {!import.meta.env.VITE_GEMINI_API_KEY && (
+                                <p style={{fontSize: '0.75rem', color: 'var(--text-3)', marginTop: 12}}>Add VITE_GEMINI_API_KEY to see advanced AI-driven financial strategies.</p>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }

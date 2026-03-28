@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS expenses (
   is_recurring BOOLEAN DEFAULT FALSE,
   recurrence_interval VARCHAR(20),
   last_recurrence_date DATE,
+  category VARCHAR(50) DEFAULT 'Others',
   exchange_rate DECIMAL(12, 6) DEFAULT 1.0,
   converted_amount DECIMAL(12, 2),
   created_at TIMESTAMPTZ DEFAULT NOW(),

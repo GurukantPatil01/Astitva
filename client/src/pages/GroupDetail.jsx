@@ -57,7 +57,7 @@ export default function GroupDetail() {
     const [expenseForm, setExpenseForm] = useState({
         title: '', amount: '', currency: 'INR', paid_by: '',
         date: new Date().toISOString().split('T')[0],
-        split_method: 'equal', is_recurring: false,
+        split_method: 'equal', is_recurring: false, category: 'Others',
         recurrence_interval: 'monthly', split_details: {}, members: [],
     });
 
@@ -123,6 +123,7 @@ export default function GroupDetail() {
                 currency: expenseForm.currency,
                 paid_by: parseInt(expenseForm.paid_by),
                 date: expenseForm.date,
+                category: expenseForm.category,
                 split_method: expenseForm.split_method,
                 is_recurring: expenseForm.is_recurring,
                 recurrence_interval: expenseForm.is_recurring ? expenseForm.recurrence_interval : null,
@@ -261,14 +262,29 @@ export default function GroupDetail() {
                     <div className="smart-settlement-action">
                         Pay <strong>{currencySymbol}{bestSettlement.amount.toLocaleString()}</strong> to <strong>{bestSettlement.to_name}</strong> to settle dues.
                         <div className="smart-progress"><div className="smart-progress-bar"></div></div>
+                        <button 
+                            className="dashed-btn" 
+                            style={{marginTop: 12, fontSize: '0.8rem', width: '100%', borderColor: '#25D366', color: '#128C7E'}}
+                            onClick={() => window.open(`https://api.whatsapp.com/send?text=${generateWhatsAppMessage(settlements.settlements, group.name, currencySymbol)}`, '_blank')}
+                        >
+                            <span style={{marginRight: 6}}>💬</span> Share Settlements to WhatsApp
+                        </button>
                     </div>
                 </div>
             )}
 
             {/* ── Recent Transactions ─────────────────── */}
-            <div className="section-label" style={{marginTop: 16}}>
+            <div className="section-label" style={{marginTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 <span>Recent Transactions</span>
-                <span style={{fontSize: '0.75rem', color: 'var(--primary)', cursor: 'pointer', textTransform: 'uppercase'}} onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>VIEW ALL</span>
+                <div style={{display: 'flex', gap: 12}}>
+                    <button 
+                        onClick={() => exportToCSV(expenses, group.name, currencySymbol)}
+                        style={{fontSize: '0.7rem', color: 'var(--primary)', cursor: 'pointer', background: 'var(--bg-1)', border: '1px solid var(--border)', padding: '4px 8px', borderRadius: 8, fontWeight: 700}}
+                    >
+                        📥 EXPORT CSV
+                    </button>
+                    <span style={{fontSize: '0.75rem', color: 'var(--primary)', cursor: 'pointer', textTransform: 'uppercase', padding: '4px 0'}} onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>VIEW ALL</span>
+                </div>
             </div>
             <div style={{marginBottom: 32}}>
                 {expenses.length === 0 ? (
@@ -384,6 +400,50 @@ export default function GroupDetail() {
                                     value={expenseForm.amount}
                                     onChange={(e) => setExpenseForm({ ...expenseForm, amount: e.target.value })} 
                                 />
+                            </div>
+
+                            <div className="sub-heading-small" style={{marginBottom: 16}}>CATEGORY</div>
+                            <div className="pill-list-horizontal" style={{marginBottom: 32}}>
+                                {[
+                                    {id: 'Food', icon: '🍔'}, {id: 'Travel', icon: '🚕'}, 
+                                    {id: 'Hotel', icon: '🏨'}, {id: 'Rent', icon: '🏠'}, 
+                                    {id: 'Shopping', icon: '🛒'}, {id: 'Bills', icon: '📱'}, 
+                                    {id: 'Entertainment', icon: '🎬'}, {id: 'Others', icon: '💳'}
+                                ].map(cat => (
+                                    <div 
+                                        key={cat.id} 
+                                        className={`modern-pill ${expenseForm.category === cat.id ? 'active' : ''}`}
+                                        onClick={() => setExpenseForm({ ...expenseForm, category: cat.id, title: expenseForm.title || cat.id })}
+                                    >
+                                        <span style={{marginRight: 6}}>{cat.icon}</span>
+                                        {cat.id}
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div style={{ background: 'var(--bg-1)', padding: '16px 20px', borderRadius: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32, border: '1px solid var(--border)' }}>
+                                <div>
+                                    <div style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>Repeat this {expenseForm.recurrence_interval}</div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                    {expenseForm.is_recurring && (
+                                        <select 
+                                            value={expenseForm.recurrence_interval}
+                                            onChange={(e) => setExpenseForm({ ...expenseForm, recurrence_interval: e.target.value })}
+                                            style={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, padding: '4px 8px', fontSize: '0.75rem' }}
+                                        >
+                                            <option value="daily">Daily</option>
+                                            <option value="weekly">Weekly</option>
+                                            <option value="monthly">Monthly</option>
+                                        </select>
+                                    )}
+                                    <div 
+                                        onClick={() => setExpenseForm({ ...expenseForm, is_recurring: !expenseForm.is_recurring })}
+                                        style={{ width: 44, height: 24, borderRadius: 12, background: expenseForm.is_recurring ? 'var(--primary)' : 'var(--bg-2)', position: 'relative', cursor: 'pointer', transition: '0.2s' }}
+                                    >
+                                        <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'white', position: 'absolute', top: 3, left: expenseForm.is_recurring ? 23 : 3, transition: '0.2s' }} />
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="sub-heading-small" style={{marginBottom: 16}}>PAID BY</div>
